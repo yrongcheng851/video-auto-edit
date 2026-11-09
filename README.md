@@ -17,7 +17,7 @@
 需要 Python 3.9+，无需系统 ffmpeg。
 
 ```bash
-git clone <this-repo> video-auto-edit
+git clone https://github.com/yrongcheng851/video-auto-edit.git
 cd video-auto-edit
 
 python -m venv .venv
