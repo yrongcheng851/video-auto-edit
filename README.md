@@ -1,5 +1,8 @@
 # video-auto-edit
 
+[![CI](https://github.com/yrongcheng851/video-auto-edit/actions/workflows/ci.yml/badge.svg)](https://github.com/yrongcheng851/video-auto-edit/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 把小红书 / 抖音的竖版视频批量整理成统一的 **3:4 (1080×1440)** 成品：自动去掉片尾的平台水印卡、等比裁剪不变形、保留原声、moov 写在文件头可直接上传。
 
 不是在线服务，就是几个 Python 脚本。没有账号、没有云端上传，视频只在你本机流转。
