@@ -4,6 +4,10 @@
 
 不是在线服务，就是几个 Python 脚本。没有账号、没有云端上传，视频只在你本机流转。
 
+![左：原片 9:16，角落有作者 logo、末尾带平台水印卡；右：成品 3:4，logo 被裁出画面，片尾卡被截断](assets/demo-crop-trim.png)
+
+<sub>画面为合成示意图，不是任何真实视频的截图。</sub>
+
 ## 它能做什么
 
 - **批量下载**：粘贴分享文本或一堆短链，自动挑出链接逐个处理。
@@ -116,6 +120,12 @@ scripts/
 assets/bgm/          程序化合成的三首原创 BGM
 references/          故障排查
 ```
+
+## 更新日志
+
+各版本改了什么、限制有哪些，见 [CHANGELOG.md](CHANGELOG.md)。
+
+提交代码或报问题前，可以先跑 `python scripts/setup.py --check` 做一次环境自检。
 
 ## License
 
