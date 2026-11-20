@@ -8,12 +8,17 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        # 3.9 是 README 声明的最低版本，3.12 覆盖较新环境
-        python-version: ["3.9", "3.12"]
+        include:
+          # 3.9 是 README 声明的最低版本。ubuntu-24.04（ubuntu-latest）上
+          # setup-python 装不了 3.9，所以这一格固定用 22.04。
+          - python-version: "3.9"
+            os: ubuntu-22.04
+          - python-version: "3.12"
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
