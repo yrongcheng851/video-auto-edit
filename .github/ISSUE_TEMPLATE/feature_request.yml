@@ -1,0 +1,37 @@
+name: 功能建议
+description: 想要新的参数、新的平台、或者别的输出规格
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        这个工具刻意做窄：只管「下载 → 去掉片尾卡 → 转成 3:4 → 落盘」。
+        剪辑、调色、字幕、分发这类需求大概率不会加，说之前先看一下 README 开头的定位。
+
+  - type: textarea
+    id: need
+    attributes:
+      label: 你遇到的具体场景
+      description: 说清楚现在怎么做的、卡在哪。比「希望支持 XX」有用得多。
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 你希望的用法
+      description: 如果有想法，写出命令行长什么样。
+      placeholder: |
+        python scripts/pipeline.py "链接" --new-flag value
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: alt
+    attributes:
+      label: 现在有没有绕过去的办法
+      description: 如果有临时解法，写一下，可以判断这事有多急。
+    validations:
+      required: false

@@ -1,0 +1,79 @@
+name: 报告问题
+description: 跑不出结果、报错、或者画面处理不对劲
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        先跑一下 `python scripts/setup.py --check`，把它输出的结果贴进来，能省掉一半来回。
+
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么
+      description: 一句话说清现象，比如「下载成功但输出文件是 0 字节」。
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 贴出你实际执行的完整命令（链接可以打码，保留域名和路径形态）。
+      placeholder: |
+        1. python scripts/setup.py
+        2. python scripts/pipeline.py "https://xhslink.cn/o/xxxxx"
+        3. 输出目录里没有生成文件
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: 终端输出
+      description: 把报错前后十几行的日志粘进来，不要只贴最后一行。
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 运行环境
+      description: 操作系统、Python 版本，以及 `python scripts/setup.py --check` 的结果。
+      placeholder: |
+        OS: Windows 11 / macOS 14 / Ubuntu 22.04
+        Python: 3.11.6
+        --check 输出：
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 卡在哪个环节
+      options:
+        - 下载（拿不到视频地址 / 报登录）
+        - 去片尾卡（没删干净 或 删多了）
+        - 转 3:4（比例不对 / 画面变形 / 黑边）
+        - 音频（没声音 / 音画不同步）
+        - 配置与安装（setup.py 报错）
+        - 其他
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认事项
+      options:
+        - label: 我已经跑过 `setup.py --check`，并且看过 README 的「已知限制」
+          required: true
