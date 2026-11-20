@@ -39,6 +39,30 @@ python -m venv .venv
 
 Windows 用户把 `.venv/bin/python` 换成 `.venv\Scripts\python.exe`。
 
+## 装成技能（不想敲命令）
+
+根目录的 `SKILL.md` 遵循通用技能规范，脚本是纯 Python。把整个文件夹放对位置，Agent 就能在对话里直接调用它，不用自己记命令。
+
+| 平台 | 放置路径 |
+|---|---|
+| WorkBuddy | Windows：`%USERPROFILE%\.workbuddy\skills\video-auto-edit\`<br>macOS / Linux：`~/.workbuddy/skills/video-auto-edit/` |
+| Claude Code | `~/.claude/skills/video-auto-edit/` |
+| 其他支持 SKILL.md 的 Agent | 放进该平台的 skills 目录，**文件夹名保持 `video-auto-edit`**，与 frontmatter 的 `name` 一致 |
+
+```bash
+git clone https://github.com/yrongcheng851/video-auto-edit.git
+# 把 video-auto-edit 整个文件夹移动到上表对应路径，然后重启客户端
+```
+
+依赖仍要装一次，Agent 执行脚本时用的是你本机的 Python：
+
+```bash
+pip install -r requirements.txt
+python scripts/setup.py      # 选输出目录，只做一次
+```
+
+纯对话型 Agent（不能执行本地命令）读得到 `SKILL.md` 但跑不动脚本，这类环境用不了。
+
 ## 初始化向导
 
 跑 `scripts/setup.py` 会依次问：
