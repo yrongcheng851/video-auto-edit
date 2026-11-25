@@ -5,12 +5,16 @@ display_name_en: Video Auto Edit
 description: 短视频自动剪辑流水线。读取小红书/抖音分享链接（单个或批量），下载视频，自动剔除片尾平台/作者水印卡片片段，把画面等比缩放到 3:4 (1080x1440) 且不变形（默认等比放大裁剪填满全屏，顺带裁掉角落作者 logo），尽量保留原画质，原声 AAC 直接 copy。输出目录、cookies、编码预设由 scripts/setup.py 首次配置决定。This skill should be used when the user provides 小红书/抖音 links and asks to 剪辑/处理/下载视频、调整比例/转竖屏 3:4, or asks for batch video processing. 仅当用户明确要求去杂音/换背景音乐时才启用 BGM 替换（--replace-music / --force-music，风格 chill 舒缓 / upbeat 轻快 / energetic 动感）。
 description_zh: 批量把短视频整理成统一的 3:4 竖屏成品：自动去掉片尾的平台水印卡、等比裁剪不变形、保留原声不换 BGM、moov 写在文件头可直接上传。支持分享链接单条或批量处理，首次运行有配置向导选输出目录和 cookies。
 description_en: Batch-normalise short videos into uniform 3:4 portrait clips. Strips trailing platform watermark cards, crops proportionally without distortion, keeps the original audio, and writes the moov atom at the head so the file uploads straight away. Works on single links or whole batches, with a first-run setup wizard for output folder and cookies.
-version: "1.0.0"
+version: "1.0.1"
 author: 余荣成
 examples_zh:
   - "把这几个分享链接批量转成 3:4 竖屏，存到我的视频文件夹"
   - "这条视频结尾有平台水印卡，帮我切掉再转竖屏"
   - "画面被裁掉太多了，改成模糊背景填充重新跑一遍"
+examples_en:
+  - "Convert these share links into 3:4 portrait clips and save them to my video folder"
+  - "This video ends with a platform watermark card — trim it off, then convert it to portrait"
+  - "Too much of the frame got cropped — re-run it with blurred background fill"
 agent_created: true
 ---
 
@@ -106,7 +110,7 @@ python -m venv .venv
 - 输出目录若不可写，脚本会报错并提示改目录，不会静默失败。
 - 裁剪填满原理：`scale=1080:1440:force_original_aspect_ratio=increase` 等比放大到覆盖全屏，再 `crop=1080:1440` 居中裁剪 + `setsar=1`，保持原比例不变形；横屏视频会裁掉左右两侧，用户在意完整性时换 `--fit blur`。
 - 小红书下载可能触发登录墙；失败时引导用户导出 cookies，详见 `references/troubleshooting.md`。
-- 内置 BGM 为程序化合成的原创音乐，无版权问题；用户可把自己的 mp3 命名为 `chill.mp3`/`upbeat.mp3`/`energetic.mp3` 放入 `assets/bgm/` 覆盖，或用 `--bgm` 指定任意音乐文件。BGM 缺失时用 `<PY> scripts/make_bgm.py` 重新生成。
+- 内置 BGM 为程序化合成的原创音乐，无版权问题；用户可把自己的 mp3 命名为 `chill.mp3`/`upbeat.mp3`/`energetic.mp3` 放入 `assets/` 覆盖，或用 `--bgm` 指定任意音乐文件。BGM 缺失时用 `<PY> scripts/make_bgm.py` 重新生成。
 - 杂音检测是启发式（安静段谱平坦度 + SNR），可能误判；用户质疑结果时用 `--force-music` 或去掉 `--replace-music` 重跑。
 - 只处理用户有权使用的素材；工具不内置任何 cookies 或绕过风控的默认手段。
 - 处理完成后用 present_files 展示输出视频。

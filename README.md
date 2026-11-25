@@ -144,7 +144,7 @@ scripts/
   process_video.py   3:4 比例转换 + 编码
   detect_noise.py    杂音检测（仅换 BGM 时用）
   make_bgm.py        重新生成内置 BGM
-assets/bgm/          程序化合成的三首原创 BGM
+assets/              内置 BGM 三首（程序化合成）与示意图
 references/          故障排查
 ```
 

@@ -33,7 +33,7 @@ import tempfile
 import time
 
 SKILL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BGM_DIR = os.path.join(SKILL_DIR, "assets", "bgm")
+BGM_DIR = os.path.join(SKILL_DIR, "assets")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import config as cfgmod  # noqa: E402
 STYLES = {"chill": "chill.mp3", "upbeat": "upbeat.mp3", "energetic": "energetic.mp3"}

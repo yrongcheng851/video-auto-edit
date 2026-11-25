@@ -4,9 +4,9 @@
 Tracks are procedurally synthesized with numpy (chord pads + bass + hats), so
 they are 100% original and copyright-free. Re-run any time to regenerate:
 
-    python make_bgm.py            # writes assets/bgm/{chill,upbeat,energetic}.mp3
+    python make_bgm.py            # writes assets/{chill,upbeat,energetic}.mp3
 
-Users can also drop their own .mp3 files into assets/bgm/ with the same names
+Users can also drop their own .mp3 files into assets/ with the same names
 (or pass --bgm to process_video.py) to override.
 """
 import os
@@ -19,7 +19,7 @@ import numpy as np
 SR = 44100
 SECONDS = 32
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "..", "assets", "bgm")
+OUT = os.path.join(HERE, "..", "assets")
 
 
 def note(name):

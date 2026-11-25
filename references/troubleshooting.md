@@ -87,5 +87,5 @@ Windows 上如果选的是盘符根目录下的新建文件夹，常见原因是
 
 ## BGM 想换成自己的音乐
 
-把 mp3 放进 `assets/bgm/`，命名 `chill.mp3` / `upbeat.mp3` / `energetic.mp3` 即可覆盖内置曲目；
+把 mp3 放进 `assets/`，命名 `chill.mp3` / `upbeat.mp3` / `energetic.mp3` 即可覆盖内置曲目；
 或单次使用 `process_video.py --bgm <路径>`。内置三首是程序化合成的，可自由使用。

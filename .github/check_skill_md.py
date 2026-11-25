@@ -48,9 +48,33 @@ for key in ("display_name", "display_name_en"):
     if val and len(val) > 60:
         errors.append(f"{key} 过长（{len(val)} 字符），展示名建议 15 字以内")
 
+
+def count_list_items(block: str, key: str) -> int:
+    """数某个 key 下的 YAML 列表项条数（- 开头且缩进）。"""
+    lines = block.splitlines()
+    total, inside = 0, False
+    for line in lines:
+        if re.match(rf"^{key}:\s*$", line):
+            inside = True
+            continue
+        if inside:
+            if re.match(r"^\s+-\s", line):
+                total += 1
+            elif line.strip() and not line.startswith((" ", "\t")):
+                break
+    return total
+
+
+# 平台要求中英文示例条数一致，否则解析直接失败
+n_zh = count_list_items(block, "examples_zh")
+n_en = count_list_items(block, "examples_en")
+if n_zh != n_en:
+    errors.append(f"examples_zh 与 examples_en 数量必须一致：当前中文 {n_zh} 条、英文 {n_en} 条")
+
 print(f"version          = {ver}")
 print(f"display_name     = {values.get('display_name', '')}")
 print(f"display_name_en  = {values.get('display_name_en', '')}")
+print(f"examples         = zh {n_zh} 条 / en {n_en} 条")
 print()
 
 if errors:
