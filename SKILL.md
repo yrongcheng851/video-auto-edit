@@ -2,17 +2,17 @@
 name: video-auto-edit
 display_name: 视频自动剪辑流水线
 display_name_en: Video Auto Edit
-description: 短视频自动剪辑流水线。读取小红书/抖音分享链接（单个或批量），下载视频，自动剔除片尾平台/作者水印卡片片段，把画面等比缩放到 3:4 (1080x1440) 且不变形（默认等比放大裁剪填满全屏，顺带裁掉角落作者 logo），尽量保留原画质，原声 AAC 直接 copy。输出目录、cookies、编码预设由 scripts/setup.py 首次配置决定。This skill should be used when the user provides 小红书/抖音 links and asks to 剪辑/处理/下载视频、调整比例/转竖屏 3:4, or asks for batch video processing. 仅当用户明确要求去杂音/换背景音乐时才启用 BGM 替换（--replace-music / --force-music，风格 chill 舒缓 / upbeat 轻快 / energetic 动感）。
-description_zh: 批量把短视频整理成统一的 3:4 竖屏成品：自动去掉片尾的平台水印卡、等比裁剪不变形、保留原声不换 BGM、moov 写在文件头可直接上传。支持分享链接单条或批量处理，首次运行有配置向导选输出目录和 cookies。
-description_en: Batch-normalise short videos into uniform 3:4 portrait clips. Strips trailing platform watermark cards, crops proportionally without distortion, keeps the original audio, and writes the moov atom at the head so the file uploads straight away. Works on single links or whole batches, with a first-run setup wizard for output folder and cookies.
-version: "1.0.1"
+description: 短视频自动剪辑流水线。读取小红书/抖音分享链接（单个或批量），下载视频，自动剔除片尾平台/作者水印卡片片段，把画面等比缩放到 3:4 (1080x1440) 且不变形（默认等比放大裁剪填满全屏，顺带裁掉角落作者 logo），尽量保留原画质，原声 AAC 直接 copy。输出目录、cookies、编码预设由 scripts/setup.py 首次配置决定。可直接产出淘宝逛逛投稿用的竖屏成片，用户说「剪成逛逛视频」「做逛逛素材」「发布到千牛逛逛」时同样适用。This skill should be used when the user provides 小红书/抖音 links and asks to 剪辑/处理/下载视频、调整比例/转竖屏 3:4、做淘宝逛逛视频, or asks for batch video processing. 仅当用户明确要求去杂音/换背景音乐时才启用 BGM 替换（--replace-music / --force-music，风格 chill 舒缓 / upbeat 轻快 / energetic 动感）。
+description_zh: 把小红书、抖音的视频链接粘进来，批量剪成淘宝逛逛能直接投的 3:4 竖屏成片（1080×1440）：自动切掉片尾平台水印卡、等比裁剪不变形、保留原声不更换 BGM、moov 写在文件头可直接上传。支持单条或整批串行处理，首次运行有配置向导选输出目录和 cookies。
+description_en: Paste Xiaohongshu or Douyin video links and batch-crop them into Taobao Guangguang-ready 3:4 portrait clips (1080×1440): trailing platform watermark cards are stripped, the frame is cropped proportionally without distortion, the original audio is kept with no BGM replacement, and the moov atom is written at the head so the file uploads straight away. Works on single links or whole batches, with a first-run setup wizard for output folder and cookies.
+version: "1.0.2"
 author: 余荣成
 examples_zh:
-  - "把这几个分享链接批量转成 3:4 竖屏，存到我的视频文件夹"
+  - "把这几个小红书链接批量剪成淘宝逛逛视频，存到我的视频文件夹"
   - "这条视频结尾有平台水印卡，帮我切掉再转竖屏"
   - "画面被裁掉太多了，改成模糊背景填充重新跑一遍"
 examples_en:
-  - "Convert these share links into 3:4 portrait clips and save them to my video folder"
+  - "Turn these Xiaohongshu links into Taobao Guangguang video clips and save them to my video folder"
   - "This video ends with a platform watermark card — trim it off, then convert it to portrait"
   - "Too much of the frame got cropped — re-run it with blurred background fill"
 agent_created: true
