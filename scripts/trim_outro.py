@@ -10,8 +10,9 @@ the video just before that point with a stream copy (lossless, fast).
 Heuristic, not 100% accurate. Use `--fallback-sec` for a fixed cut when
 detection is unreliable, or `--no-trim` to only report what it would do.
 
-Corner author logos are NOT handled here: the 9:16 crop-to-fill step in
-process_video.py already crops them out of frame, so no extra work is needed.
+Corner author logos are NOT handled here: the 3:4 crop-to-fill step in
+process_video.py crops them out of frame for 9:16 / 16:9 sources, so no extra
+work is needed here.
 
 Prints JSON: {"trimmed", "cut_at", "reason", "output"}
 """

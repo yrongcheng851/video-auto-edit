@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Normalize a video to 9:16 (1080x1920) WITHOUT distortion (proportional scale),
+"""Normalize a video to 3:4 (1080x1440) WITHOUT distortion (proportional scale),
 keeping the original audio track by default. Output quality is preserved as
 closely as possible (low CRF + preset, original AAC audio copied).
 
 Fit modes (--fit):
-  crop  (default) proportional scale to cover 1080x1920, center-crop the
-        overflow. Full-bleed 9:16, no distortion; edge content may be lost.
-  blur  proportional scale to fit inside 1080x1920, empty area filled
+  crop  (default) proportional scale to cover 1080x1440, center-crop the
+        overflow. Full-bleed 3:4, no distortion; edge content may be lost.
+  blur  proportional scale to fit inside 1080x1440, empty area filled
         with a blurred, zoomed copy of the video itself. No distortion, no crop.
   black proportional scale to fit, padded with black bars.
 
@@ -38,15 +38,15 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import config as cfgmod  # noqa: E402
 STYLES = {"chill": "chill.mp3", "upbeat": "upbeat.mp3", "energetic": "energetic.mp3"}
 
-# Output canvas: 9:16 portrait (Taobao Guangguang spec). 1080x1920.
-OUT_W, OUT_H = 1080, 1920
+# Output canvas: 3:4 portrait (Taobao Guangguang spec). 1080x1440.
+OUT_W, OUT_H = 1080, 1440
 # All modes keep the source aspect ratio (no stretching / distortion).
 def build_filters(zoom=1.0):
     """返回各 fit 模式的滤镜串。
 
-    zoom > 1.0：先按比例放大再居中裁回 1080x1920，等于从四周各裁掉
+    zoom > 1.0：先按比例放大再居中裁回 1080x1440，等于从四周各裁掉
     (1 - 1/zoom)/2 的画面，用来把贴在边缘的作者角标挤出取景框。
-    9:16 输出与多数源视频同比例，默认几乎不裁，所以角标需要靠 zoom 处理。
+    源视频本身已是 3:4 时 crop 几乎不裁，角标需要靠 zoom 处理。
     """
     def even(v):
         return max(2, int(round(v)) // 2 * 2)
@@ -179,7 +179,7 @@ def process(input_path, fit="crop", replace_audio=False, style="chill", bgm=None
     ffmpeg = get_ffmpeg()
     base = sanitize(title or os.path.splitext(os.path.basename(input_path))[0])
     stamp = time.strftime("%Y%m%d_%H%M%S")
-    output = os.path.join(out_dir, f"{base}_9x16_{stamp}.mp4")
+    output = os.path.join(out_dir, f"{base}_3x4_{stamp}.mp4")
 
     zoom = 1.0 if fit != "crop" else max(1.0, float(zoom or 1.0))
     vfilter = build_filters(zoom)[fit]
@@ -233,7 +233,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("input")
     ap.add_argument("--fit", choices=list(FILTERS), default="crop",
-                    help="how to adapt to 9:16 without distortion (default: crop to fill)")
+                    help="how to adapt to 3:4 without distortion (default: crop to fill)")
     ap.add_argument("--replace-audio", action="store_true",
                     help="opt-in: replace original audio with BGM")
     ap.add_argument("--style", choices=list(STYLES), default="chill")
@@ -244,8 +244,8 @@ def main():
                     help="override the configured encoding preset for this run")
     ap.add_argument("--title", default=None)
     ap.add_argument("--zoom", type=float, default=1.0,
-                    help="crop 模式下先放大再居中裁回 1080x1920；>1 可把画面"
-                         "边缘的作者角标挤出取景框（1.08 约裁掉四周 3.7pct），"
+                    help="crop 模式下先放大再居中裁回 1080x1440；>1 可把画面"
+                         "边缘的作者角标挤出取景框（1.12 约裁掉四周 5.4pct），"
                          "默认 1.0 不放大")
     args = ap.parse_args()
     try:

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""End-to-end pipeline: link(s) -> download -> 9:16 (proportional, no distortion)
+"""End-to-end pipeline: link(s) -> download -> 3:4 (proportional, no distortion)
 -> keep original audio -> configured output directory
 
 Single:   python pipeline.py "分享文本或链接" [--fit crop|blur|black]
@@ -48,7 +48,7 @@ def handle(url, workdir, args):
     rec["downloaded"] = dl["file"]
 
     # Step: cut the outro watermark card (platform/author card at the very end).
-    # Corner author logos are handled later by the 9:16 crop-to-fill in
+    # Corner author logos are handled later by the 3:4 crop-to-fill in
     # process_video.py, so only the trailing card is cut here.
     work = dl["file"]
     if not args.no_trim_outro:
@@ -97,10 +97,10 @@ def main():
     ap.add_argument("links", nargs="*", help="share text / urls")
     ap.add_argument("--file", help="text file with one url per line (batch mode)")
     ap.add_argument("--fit", choices=["crop", "blur", "black"], default="crop",
-                    help="9:16 fit mode without distortion (default: crop to fill)")
+                    help="3:4 fit mode without distortion (default: crop to fill)")
     ap.add_argument("--zoom", type=float, default=1.0,
-                    help="crop 模式下先放大再居中裁回 1080x1920；>1 可把画面边缘"
-                         "的作者角标挤出取景框（1.08 约裁掉四周 3.7pct），默认 1.0")
+                    help="crop 模式下先放大再居中裁回 1080x1440；>1 可把画面边缘"
+                         "的作者角标挤出取景框（1.12 约裁掉四周 5.4pct），默认 1.0")
     ap.add_argument("--replace-music", action="store_true",
                     help="opt-in: detect noise and replace audio with BGM only if noisy")
     ap.add_argument("--force-music", action="store_true",
