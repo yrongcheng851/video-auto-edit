@@ -4,7 +4,7 @@ display_name: 视频自动剪辑流水线
 display_name_en: Video Auto Edit
 description: 短视频自动剪辑流水线。读取小红书/抖音分享链接（单个或批量），下载视频，自动剔除片尾平台/作者水印卡片片段，把画面等比缩放到 3:4 (1080x1440) 且不变形（默认等比放大裁剪填满全屏，竖屏源上下裁掉的部分会顺带带走贴边作者 logo），尽量保留原画质，原声 AAC 直接 copy。输出目录、cookies、编码预设由 scripts/setup.py 首次配置决定。可直接产出淘宝逛逛投稿用的成片，用户说「剪成逛逛视频」「做逛逛素材」「发布到千牛逛逛」时同样适用。This skill should be used when the user provides 小红书/抖音 links and asks to 剪辑/处理/下载视频、调整比例/转 3:4 竖屏、做淘宝逛逛视频, or asks for batch video processing. 仅当用户明确要求去杂音/换背景音乐时才启用 BGM 替换（--replace-music / --force-music，风格 chill 舒缓 / upbeat 轻快 / energetic 动感）。
 description_zh: 把小红书、抖音的视频链接粘进来，批量剪成淘宝逛逛能直接投的 3:4 竖屏成片（1080×1440）：自动切掉片尾平台水印卡、等比裁剪不变形、保留原声不更换 BGM、moov 写在文件头可直接上传。支持单条或整批串行处理，首次运行有配置向导选输出目录和 cookies。
-description_en: Paste Xiaohongshu or Douyin video links and batch-crop them into Taobao Guangguang-ready 3:4 portrait clips (1080×1440): trailing platform watermark cards are stripped, the frame is cropped proportionally without distortion, the original audio is kept with no BGM replacement, and the moov atom is written at the head so the file uploads straight away. Works on single links or whole batches, with a first-run setup wizard for output folder and cookies.
+description_en: Paste Xiaohongshu or Douyin video links and batch-crop them into Taobao Guangguang-ready 3:4 portrait clips (1080×1440) — trailing platform watermark cards are stripped, the frame is cropped proportionally without distortion, the original audio is kept with no BGM replacement, and the moov atom is written at the head so the file uploads straight away. Works on single links or whole batches, with a first-run setup wizard for output folder and cookies.
 version: "1.1.1"
 author: 余荣成
 examples_zh:

@@ -7,10 +7,20 @@
 必填项与平台一致：
   name / display_name / display_name_en
   description_zh / description_en / version（SemVer 三段式）
+
+**真正的 YAML 解析**也会跑一遍：平台用的是标准 YAML 解析器，未加引号的
+长句里只要出现半角「冒号+空格」（例如 ``clips (1080×1440): trailing``），
+就会报 `mapping values are not allowed in this context` 并拒绝解析。
+只用正则逐行取值是发现不了这个问题的。
 """
 import re
 import sys
 import pathlib
+
+try:
+    import yaml
+except ImportError:                                     # 本地没装 PyYAML 时降级
+    yaml = None
 
 REQUIRED = [
     "name",
@@ -35,6 +45,35 @@ for line in block.splitlines():
         values[km.group(1)] = km.group(2).strip().strip('"').strip("'")
 
 errors = []
+
+# ---- 1. 真 YAML 解析（平台同款校验，最容易漏的一道） ----
+if yaml is None:
+    print("提示：未安装 PyYAML，跳过真实 YAML 解析（pip install pyyaml 可开启）")
+else:
+    try:
+        parsed = yaml.safe_load(block)
+        if not isinstance(parsed, dict):
+            errors.append("frontmatter 解析结果不是键值对结构")
+    except yaml.YAMLError as e:
+        mark = getattr(e, "problem_mark", None)
+        where = f"第 {mark.line + 1} 行第 {mark.column + 1} 列" if mark else "未知位置"
+        errors.append(f"YAML 语法错误（{where}）：{getattr(e, 'problem', e)}")
+
+# ---- 2. 未加引号的值里不允许出现「冒号+空格」，逐字段定位 ----
+for i, line in enumerate(block.splitlines(), 1):
+    km = re.match(r"^([A-Za-z_][A-Za-z0-9_]*):[ \t]+(\S.*)$", line)
+    if not km:
+        continue
+    key, val = km.group(1), km.group(2)
+    if val[:1] in "\"'":
+        continue
+    hit = re.search(r":(\s|$)", val)
+    if hit:
+        snippet = val[max(0, hit.start() - 24):hit.start() + 12]
+        errors.append(
+            f'{key}（第 {i} 行）的值里有未加引号的半角「冒号+空格」：…{snippet}… '
+            f"平台 YAML 解析会直接失败，改成「—」或全角「：」")
+
 for key in REQUIRED:
     if not values.get(key):
         errors.append(f"缺少 {key}")
