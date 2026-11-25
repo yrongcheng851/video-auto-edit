@@ -3,11 +3,11 @@
 [![CI](https://github.com/yrongcheng851/video-auto-edit/actions/workflows/ci.yml/badge.svg)](https://github.com/yrongcheng851/video-auto-edit/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-把小红书 / 抖音的竖版视频批量整理成统一的 **3:4 (1080×1440)** 成品：自动去掉片尾的平台水印卡、等比裁剪不变形、保留原声、moov 写在文件头可直接上传。
+把小红书 / 抖音的竖版视频批量整理成统一的 **9:16 (1080×1920)** 成品：自动去掉片尾的平台水印卡、等比裁剪不变形、保留原声、moov 写在文件头可直接上传。
 
 不是在线服务，就是几个 Python 脚本。没有账号、没有云端上传，视频只在你本机流转。
 
-![左：原片 9:16，角落有作者 logo、末尾带平台水印卡；右：成品 3:4，logo 被裁出画面，片尾卡被截断](assets/demo-crop-trim.png)
+![左：原片 9:16，角落有作者 logo、末尾带平台水印卡；右：成品 9:16 1080×1920，片尾卡已无损截断，加 --zoom 后贴边角标被裁出取景框](assets/demo-crop-trim.png)
 
 <sub>画面为合成示意图，不是任何真实视频的截图。</sub>
 
@@ -15,7 +15,7 @@
 
 - **批量下载**：粘贴分享文本或一堆短链，自动挑出链接逐个处理。
 - **去片尾卡**：扫末段画面，找「突变 + 之后静止」的平台卡片，stream copy 无损截断。极短的黑底署名卡也能识别。
-- **转 3:4**：等比放大后居中裁剪填满，不变形。角落的作者 logo 顺带裁出画面外。
+- **转 9:16**：等比缩放填满 1080×1920，不变形。绝大多数源视频本来就是 9:16，这一步几乎不损失画面；想连角落的作者角标一起去掉，加 `--zoom 1.12`（放大后居中裁，四周各裁 5.4%）。
 - **保原声**：音频是 AAC 就零重编码直接 copy。想换 BGM 是显式开关，默认不动。
 - **保画质**：CRF 18（长片自动降到 CRF 20 换取成功率），`+faststart`。
 
@@ -138,10 +138,10 @@ python scripts/pipeline.py --file links.txt
 scripts/
   setup.py           首次配置向导 + 环境自检
   config.py          配置加载（三个脚本共享）
-  pipeline.py        一键流水线：下载 → 去片尾 → 转 3:4 → 落盘
+  pipeline.py        一键流水线：下载 → 去片尾 → 转 9:16 → 落盘
   download_video.py  小红书 / 抖音下载
   trim_outro.py      片尾水印卡检测与无损截断
-  process_video.py   3:4 比例转换 + 编码
+  process_video.py   9:16 比例转换 + 编码
   detect_noise.py    杂音检测（仅换 BGM 时用）
   make_bgm.py        重新生成内置 BGM
 assets/              内置 BGM 三首（程序化合成）与示意图

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Normalize a video to 3:4 (1080x1440) WITHOUT distortion (proportional scale),
+"""Normalize a video to 9:16 (1080x1920) WITHOUT distortion (proportional scale),
 keeping the original audio track by default. Output quality is preserved as
-closely as possible (low CRF + medium preset, original AAC audio copied).
+closely as possible (low CRF + preset, original AAC audio copied).
 
 Fit modes (--fit):
-  crop  (default) proportional scale to cover 1080x1440, center-crop the
-        overflow. Full-bleed 3:4, no distortion; edge content may be lost.
-  blur  proportional scale to fit inside 1080x1440, empty area filled
+  crop  (default) proportional scale to cover 1080x1920, center-crop the
+        overflow. Full-bleed 9:16, no distortion; edge content may be lost.
+  blur  proportional scale to fit inside 1080x1920, empty area filled
         with a blurred, zoomed copy of the video itself. No distortion, no crop.
   black proportional scale to fit, padded with black bars.
 
@@ -38,19 +38,33 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import config as cfgmod  # noqa: E402
 STYLES = {"chill": "chill.mp3", "upbeat": "upbeat.mp3", "energetic": "energetic.mp3"}
 
-# Output canvas: 3:4 portrait. width:height = 3:4 -> 1080x1440.
-OUT_W, OUT_H = 1080, 1440
+# Output canvas: 9:16 portrait (Taobao Guangguang spec). 1080x1920.
+OUT_W, OUT_H = 1080, 1920
 # All modes keep the source aspect ratio (no stretching / distortion).
-FILTERS = {
-    "blur": (f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=increase,"
-             f"crop={OUT_W}:{OUT_H},boxblur=20:5[bg];"
-             f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=decrease[fg];"
-             f"[bg][fg]overlay=(W-w)/2:(H-h)/2,setsar=1[v]"),
-    "black": (f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=decrease,"
-              f"pad={OUT_W}:{OUT_H}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v]"),
-    "crop": (f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=increase,"
-             f"crop={OUT_W}:{OUT_H},setsar=1[v]"),
-}
+def build_filters(zoom=1.0):
+    """返回各 fit 模式的滤镜串。
+
+    zoom > 1.0：先按比例放大再居中裁回 1080x1920，等于从四周各裁掉
+    (1 - 1/zoom)/2 的画面，用来把贴在边缘的作者角标挤出取景框。
+    9:16 输出与多数源视频同比例，默认几乎不裁，所以角标需要靠 zoom 处理。
+    """
+    def even(v):
+        return max(2, int(round(v)) // 2 * 2)
+
+    zw, zh = even(OUT_W * zoom), even(OUT_H * zoom)
+    return {
+        "blur": (f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=increase,"
+                 f"crop={OUT_W}:{OUT_H},boxblur=20:5[bg];"
+                 f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=decrease[fg];"
+                 f"[bg][fg]overlay=(W-w)/2:(H-h)/2,setsar=1[v]"),
+        "black": (f"[0:v]scale={OUT_W}:{OUT_H}:force_original_aspect_ratio=decrease,"
+                  f"pad={OUT_W}:{OUT_H}:(ow-iw)/2:(oh-ih)/2:black,setsar=1[v]"),
+        "crop": (f"[0:v]scale={zw}:{zh}:force_original_aspect_ratio=increase,"
+                 f"crop={OUT_W}:{OUT_H},setsar=1[v]"),
+    }
+
+
+FILTERS = build_filters()
 
 
 def get_ffmpeg():
@@ -156,7 +170,7 @@ def ensure_writable(out_dir, io_mode="normal"):
 
 
 def process(input_path, fit="crop", replace_audio=False, style="chill", bgm=None,
-            out_dir=None, title=None, preset=None, io_mode=None):
+            out_dir=None, title=None, preset=None, io_mode=None, zoom=1.0):
     settings = cfgmod.load()
     out_dir = out_dir or settings["out_dir"]
     preset = preset or settings["preset"]
@@ -165,9 +179,10 @@ def process(input_path, fit="crop", replace_audio=False, style="chill", bgm=None
     ffmpeg = get_ffmpeg()
     base = sanitize(title or os.path.splitext(os.path.basename(input_path))[0])
     stamp = time.strftime("%Y%m%d_%H%M%S")
-    output = os.path.join(out_dir, f"{base}_3x4_{stamp}.mp4")
+    output = os.path.join(out_dir, f"{base}_9x16_{stamp}.mp4")
 
-    vfilter = FILTERS[fit]
+    zoom = 1.0 if fit != "crop" else max(1.0, float(zoom or 1.0))
+    vfilter = build_filters(zoom)[fit]
     cmd = [ffmpeg, "-y", "-v", "error", "-i", input_path]
     if replace_audio:
         bgm_path = bgm or os.path.join(BGM_DIR, STYLES[style])
@@ -218,7 +233,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("input")
     ap.add_argument("--fit", choices=list(FILTERS), default="crop",
-                    help="how to adapt to 3:4 without distortion (default: crop to fill)")
+                    help="how to adapt to 9:16 without distortion (default: crop to fill)")
     ap.add_argument("--replace-audio", action="store_true",
                     help="opt-in: replace original audio with BGM")
     ap.add_argument("--style", choices=list(STYLES), default="chill")
@@ -228,10 +243,15 @@ def main():
     ap.add_argument("--preset", choices=list(cfgmod.PRESETS), default=None,
                     help="override the configured encoding preset for this run")
     ap.add_argument("--title", default=None)
+    ap.add_argument("--zoom", type=float, default=1.0,
+                    help="crop 模式下先放大再居中裁回 1080x1920；>1 可把画面"
+                         "边缘的作者角标挤出取景框（1.08 约裁掉四周 3.7pct），"
+                         "默认 1.0 不放大")
     args = ap.parse_args()
     try:
         print(json.dumps(process(args.input, args.fit, args.replace_audio, args.style,
-                                 args.bgm, args.out_dir, args.title, args.preset),
+                                 args.bgm, args.out_dir, args.title, args.preset,
+                                 zoom=args.zoom),
                          ensure_ascii=False))
     except Exception as e:
         print(json.dumps({"input": args.input, "error": str(e)[:500]}, ensure_ascii=False))
